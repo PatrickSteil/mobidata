@@ -187,4 +187,3 @@ on the system ID and `vehicle_type_id` field.
 ├── go.mod
 └── README.md
 ```
-# mobidata

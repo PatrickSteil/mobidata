@@ -1,0 +1,42 @@
+name: Release
+
+# Runs when you push a tag like v1.0.0
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write  # needed so GoReleaser can create the GitHub Release
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # GoReleaser needs the full git history for the changelog
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.22"
+
+      # go-sqlite3 is a CGO library, so we need C cross-compilers for each
+      # target platform. These are all available in the ubuntu-latest runner.
+      - name: Install cross-compilers
+        run: |
+          sudo apt-get update -q
+          sudo apt-get install -y gcc-aarch64-linux-gnu
+
+      - name: Run GoReleaser
+        uses: goreleaser/goreleaser-action@v6
+        with:
+          version: latest
+          args: release --clean
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Tell CGO which compiler to use for each OS/arch combo
+          CC_linux_amd64: gcc
+          CC_linux_arm64: aarch64-linux-gnu-gcc
