@@ -1,4 +1,4 @@
-project_name: mobidata-poller
+project_name: mobidata
 
 before:
   hooks:
@@ -56,7 +56,7 @@ checksum:
 release:
   github:
     owner: PatrickSteil
-    name: mobidata-poller
+    name: mobidata
 
 changelog:
   sort: asc
