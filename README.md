@@ -10,30 +10,11 @@ Two binaries:
 | `cmd/poller` | Polls ~80 German GBFS feeds every 60 s, upserts to SQLite |
 | `cmd/server` | HTTP server to query vehicles by location + type |
 
----
-
-## Requirements
-
-- Go 1.22+
-- GCC (needed by `go-sqlite3` for CGo)
-  - Linux: `apt install gcc`
-  - macOS: Xcode CLT (`xcode-select --install`)
-  - Windows: MinGW or WSL
-
----
-
 ## Build
 
 ```bash
-# Get dependencies
-go mod tidy
-
-# Build both binaries
-go build -o bin/poller ./cmd/poller
-go build -o bin/server ./cmd/server
+make
 ```
-
----
 
 ## Run
 
@@ -67,8 +48,6 @@ Flags:
 | `-addr` | `:8080` | Listen address |
 
 Both binaries can run simultaneously — the poller writes via WAL mode, the server reads concurrently without blocking.
-
----
 
 ## HTTP API
 
@@ -125,8 +104,6 @@ curl "http://localhost:8080/vehicles?lat=48.775&lon=9.182&radius=2000&type=car"
 }
 ```
 
----
-
 ### `GET /stats`
 
 Returns the total count of vehicles in the database grouped by type.
@@ -146,16 +123,12 @@ curl http://localhost:8080/stats
 }
 ```
 
----
-
 ### `GET /health`
 
 ```bash
 curl http://localhost:8080/health
 # {"status":"ok"}
 ```
-
----
 
 ## Vehicle Types
 
@@ -170,8 +143,6 @@ curl http://localhost:8080/health
 
 Type detection uses the GBFS `vehicle_types` feed when available, with a fallback heuristic based
 on the system ID and `vehicle_type_id` field.
-
----
 
 ## Project Structure
 
