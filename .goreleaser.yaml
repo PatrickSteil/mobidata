@@ -10,45 +10,47 @@ builds:
   - id: poller
     main: ./cmd/poller
     binary: poller
+    goos: [linux]
+    goarch: [amd64, arm64]
     env:
       - CGO_ENABLED=1
-    goos:
-      - linux
-    goarch:
-      - amd64
-      - arm64
     ldflags:
       - -s -w
       - -X main.version={{ .Version }}
     mod_timestamp: "{{ .CommitTimestamp }}"
+    overrides:
+      - goarch: arm64
+        env:
+          - CGO_ENABLED=1
+          - CC=aarch64-linux-gnu-gcc
 
   - id: server
     main: ./cmd/server
     binary: server
+    goos: [linux]
+    goarch: [amd64, arm64]
     env:
       - CGO_ENABLED=1
-    goos:
-      - linux
-    goarch:
-      - amd64
-      - arm64
     ldflags:
       - -s -w
       - -X main.version={{ .Version }}
     mod_timestamp: "{{ .CommitTimestamp }}"
+    overrides:
+      - goarch: arm64
+        env:
+          - CGO_ENABLED=1
+          - CC=aarch64-linux-gnu-gcc
 
 archives:
   - id: poller
-    ids:
-      - poller
+    ids: [poller]
     name_template: "{{ .ProjectName }}_poller_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
-    format: tar.gz
+    formats: [tar.gz]
 
   - id: server
-    ids:
-      - server
+    ids: [server]
     name_template: "{{ .ProjectName }}_server_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
-    format: tar.gz
+    formats: [tar.gz]
 
 checksum:
   name_template: checksums.txt
