@@ -1,3 +1,5 @@
+version: 2
+
 project_name: mobidata-poller
 
 before:
@@ -12,13 +14,13 @@ builds:
       - CGO_ENABLED=1
     goos:
       - linux
-      - darwin
     goarch:
       - amd64
       - arm64
     ldflags:
       - -s -w
-      - -X main.version={{.Version}}
+      - -X main.version={{ .Version }}
+    mod_timestamp: "{{ .CommitTimestamp }}"
 
   - id: server
     main: ./cmd/server
@@ -27,27 +29,26 @@ builds:
       - CGO_ENABLED=1
     goos:
       - linux
-      - darwin
     goarch:
       - amd64
       - arm64
     ldflags:
       - -s -w
-      - -X main.version={{.Version}}
+      - -X main.version={{ .Version }}
+    mod_timestamp: "{{ .CommitTimestamp }}"
 
 archives:
-  - id: default
-    builds:
+  - id: poller
+    ids:
       - poller
+    name_template: "{{ .ProjectName }}_poller_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
+    format: tar.gz
+
+  - id: server
+    ids:
       - server
-    name_template: >-
-      {{ .ProjectName }}_
-      {{- .Version }}_
-      {{- .Os }}_
-      {{- .Arch }}
-    format_overrides:
-      - goos: windows
-        format: zip
+    name_template: "{{ .ProjectName }}_server_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
+    format: tar.gz
 
 checksum:
   name_template: checksums.txt
@@ -56,6 +57,7 @@ release:
   github:
     owner: PatrickSteil
     name: mobidata-poller
+  name_template: "v{{ .Version }}"
 
 changelog:
   sort: asc
