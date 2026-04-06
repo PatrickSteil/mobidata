@@ -7,7 +7,7 @@ import (
 	"sort"
 	"strings"
 
-	_ "github.com/mattn/go-sqlite3"
+	_ "modernc.org/sqlite"
 
 	"github.com/PatrickSteil/mobidata-poller/internal/model"
 )
@@ -67,7 +67,7 @@ type Store struct {
 // Open opens (or creates) the SQLite database at path and ensures the schema
 // exists.  The R*Tree module is compiled into go-sqlite3 by default.
 func Open(path string) (*Store, error) {
-	db, err := sql.Open("sqlite3", path+"?_journal=WAL&_timeout=5000")
+	db, err := sql.Open("sqlite", path+"?_journal=WAL&_timeout=5000")
 	if err != nil {
 		return nil, fmt.Errorf("open db: %w", err)
 	}
